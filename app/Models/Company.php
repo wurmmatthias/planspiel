@@ -15,7 +15,7 @@ class Company extends Model
         'logo',
         'description',
     ];
-    
+
 
     public function owner()
     {
@@ -25,5 +25,10 @@ class Company extends Model
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function kpis()
+    {
+        return $this->hasMany(CompanyKpi::class);
     }
 }

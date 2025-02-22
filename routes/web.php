@@ -43,12 +43,22 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', function () {
+        // Inline check for admin privileges
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Access denied');
+        }
+
+        $companies = Company::all();
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+
     Route::get('/admin/companies', function () {
         // Inline check for admin privileges
         if (Auth::user()->role !== 'admin') {
             abort(403, 'Access denied');
         }
-        
+
         $companies = Company::all();
         return view('admin.companies', compact('companies'));
     })->name('admin.companies');

@@ -5,6 +5,16 @@
         </h2>
     </x-slot>
 
+        <!-- Hero Header -->
+    <div class="py-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-800 dark:via-purple-800 dark:to-pink-800">
+    <div class="max-w-3xl mx-auto text-center">
+            <h1 class="text-5xl font-bold text-white">Starte dein Unternehmen</h1>
+            <p class="mt-4 text-xl text-white opacity-90">
+                Wähle ein passendes Firmenlogo, gib deinem Unternehmen einen Namen und beschreibe deine Vision.
+            </p>
+        </div>
+    </div>
+
     <div class="py-12">
         <div class="max-w-md mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8">

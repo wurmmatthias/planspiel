@@ -4,7 +4,7 @@
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
-    
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(Auth::user()->company)
@@ -101,6 +101,13 @@
             @endif
 
             @if(Auth::user()->company)
+
+            @php
+                  $currentYear = now()->year;
+                  $currentQuarter = 'Q2'; // Adjust as needed
+                  $kpi = Auth::user()->company->kpis()->where('year', $currentYear)->where('quarter', $currentQuarter)->first();
+            @endphp
+
                 <!-- Quartalsanzeige -->
                 <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8 mt-4">
                     <div class="flex flex-col items-center">
@@ -109,22 +116,22 @@
                         <!-- Quartals-Timeline -->
                         <div class="flex items-center space-x-2">
                             <!-- Q1 (aktuell) -->
-                            <div class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg">
+                            <div class="px-4 py-2 {{ $currentQuarter == 'Q1' ? 'bg-green-500 text-white' : 'bg-green-100 text-blue-500' }} font-semibold rounded-lg">
                                 Q1
                             </div>
                             <span class="text-gray-600 dark:text-gray-400">&gt;</span>
                             <!-- Q2 -->
-                            <div class="px-4 py-2 bg-green-100 text-blue-500 font-semibold rounded-lg">
+                            <div class="px-4 py-2 {{ $currentQuarter == 'Q2' ? 'bg-green-500 text-white' : 'bg-green-100 text-blue-500' }} font-semibold rounded-lg">
                                 Q2
                             </div>
                             <span class="text-gray-600 dark:text-gray-400">&gt;</span>
                             <!-- Q3 -->
-                            <div class="px-4 py-2 bg-green-100 text-blue-500 font-semibold rounded-lg">
+                            <div class="px-4 py-2 {{ $currentQuarter == 'Q3' ? 'bg-green-500 text-white' : 'bg-green-100 text-blue-500' }} font-semibold rounded-lg">
                                 Q3
                             </div>
                             <span class="text-gray-600 dark:text-gray-400">&gt;</span>
                             <!-- Q4 -->
-                            <div class="px-4 py-2 bg-green-100 text-blue-500 font-semibold rounded-lg">
+                            <div class="px-4 py-2 {{ $currentQuarter == 'Q4' ? 'bg-green-500 text-white' : 'bg-green-100 text-blue-500' }} font-semibold rounded-lg">
                                 Q4
                             </div>
                         </div>
@@ -147,33 +154,50 @@
                     </div>
                 </div>
 
-                <!-- KPI Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-                    <!-- Card 1: Umsatz -->
-                    <div class="bg-white dark:bg-gray-700 shadow-md rounded-lg p-6">
-                        <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Umsatz</h4>
-                        <p class="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">€1.200.000</p>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Gesamtumsatz im Quartal</p>
-                    </div>
-                    <!-- Card 2: Gewinn -->
-                    <div class="bg-white dark:bg-gray-700 shadow-md rounded-lg p-6">
-                        <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Gewinn</h4>
-                        <p class="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">€300.000</p>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Reingewinn</p>
-                    </div>
-                    <!-- Card 3: Kunden -->
-                    <div class="bg-white dark:bg-gray-700 shadow-md rounded-lg p-6">
-                        <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Kunden</h4>
-                        <p class="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">850</p>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Neue Kunden</p>
-                    </div>
-                    <!-- Card 4: Aufträge -->
-                    <div class="bg-white dark:bg-gray-700 shadow-md rounded-lg p-6">
-                        <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Aufträge</h4>
-                        <p class="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">120</p>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Aktuelle Aufträge</p>
-                    </div>
-                </div>
+                @if($kpi)
+                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mt-8">
+                      <!-- Umsatz -->
+                      <div class="bg-white dark:bg-gray-700 shadow-md rounded-lg p-4 text-center">
+                          <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Umsatz</h4>
+                          <p class="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">
+                              €{{ number_format($kpi->umsatz, 2, ',', '.') }}
+                          </p>
+                      </div>
+                      <!-- Gewinn -->
+                      <div class="bg-white dark:bg-gray-700 shadow-md rounded-lg p-4 text-center">
+                          <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Gewinn</h4>
+                          <p class="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">
+                              €{{ number_format($kpi->gewinn, 2, ',', '.') }}
+                          </p>
+                      </div>
+                      <!-- Kunden -->
+                      <div class="bg-white dark:bg-gray-700 shadow-md rounded-lg p-4 text-center">
+                          <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Kunden</h4>
+                          <p class="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">
+                              {{ $kpi->kunden }}
+                          </p>
+                      </div>
+                      <!-- Aufträge -->
+                      <div class="bg-white dark:bg-gray-700 shadow-md rounded-lg p-4 text-center">
+                          <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Aufträge</h4>
+                          <p class="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">
+                              {{ $kpi->auftraege }}
+                          </p>
+                      </div>
+                      <!-- Angestellte -->
+                      <div class="bg-white dark:bg-gray-700 shadow-md rounded-lg p-4 text-center">
+                          <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Angestellte</h4>
+                          <p class="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">
+                              {{ $kpi->angestellte }}
+                          </p>
+                      </div>
+                  </div>
+                @else
+                  <div class="mt-8 text-center">
+                      <p class="text-gray-700 dark:text-gray-300">Für das aktuelle Quartal sind noch keine KPI-Daten vorhanden.</p>
+                  </div>
+                @endif
+
 <!-- Core Decisions Section -->
 <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8 mt-8">
     <h3 class="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">Kernentscheidungen für das nächste Quartal</h3>

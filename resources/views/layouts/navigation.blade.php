@@ -54,6 +54,11 @@
                     </x-slot>
 
                     <x-slot name="content">
+                    @if(Auth::user()->role === 'admin')
+                        <x-dropdown-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                            {{ __('Admin Area') }}
+                        </x-dropdown-link>
+                    @endif
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Kontoinformationen') }}
                         </x-dropdown-link>

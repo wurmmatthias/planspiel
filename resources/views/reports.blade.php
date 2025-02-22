@@ -5,235 +5,169 @@
           Quartalsberichte
       </h2>
   </x-slot>
-  
+
+  @php
+      $currentYear = now()->year;
+      // Define an array of quarters for convenience.
+      $quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+  @endphp
+
   <div class="py-12 bg-gray-50 dark:bg-gray-900">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <!-- Hero Section -->
           <div class="bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-700 dark:to-purple-700 shadow-2xl rounded-lg p-10 mb-10 text-center">
               <h1 class="text-5xl font-bold text-white">Aktuelle Quartalsberichte</h1>
               <p class="mt-4 text-xl text-white opacity-90">
-                  Ein Überblick über die neuesten Ergebnisse und KPIs Ihres Unternehmens.
+                  Ein Überblick über die neuesten Ergebnisse und Kennzahlen Ihres Unternehmens.
               </p>
           </div>
-  
+
           <!-- Tab Container using Alpine.js -->
-          <div x-data="{ tab: 'q1' }" class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8">
+          <div x-data="{ tab: 'Q1' }" class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8">
               <!-- Tab Headers with Emoji Indicators -->
               <div class="flex justify-around border-b border-gray-300 dark:border-gray-700 pb-4">
-                  <button @click="tab = 'q1'" 
-                          :class="tab === 'q1' ? 'border-b-4 border-blue-500 text-blue-500' : 'text-gray-500'"
-                          class="py-2 px-4 focus:outline-none flex items-center">
-                      Q1 <span class="ml-1 text-xl">✅</span>
-                  </button>
-                  <button @click="tab = 'q2'" 
-                          :class="tab === 'q2' ? 'border-b-4 border-blue-500 text-blue-500' : 'text-gray-500'"
-                          class="py-2 px-4 focus:outline-none flex items-center">
-                      Q2 <span class="ml-1 text-xl">❌</span>
-                  </button>
-                  <button @click="tab = 'q3'" 
-                          :class="tab === 'q3' ? 'border-b-4 border-blue-500 text-blue-500' : 'text-gray-500'"
-                          class="py-2 px-4 focus:outline-none flex items-center">
-                      Q3 <span class="ml-1 text-xl">❌</span>
-                  </button>
-                  <button @click="tab = 'q4'" 
-                          :class="tab === 'q4' ? 'border-b-4 border-blue-500 text-blue-500' : 'text-gray-500'"
-                          class="py-2 px-4 focus:outline-none flex items-center">
-                      Q4 <span class="ml-1 text-xl">❌</span>
-                  </button>
+                  @foreach($quarters as $index => $quarter)
+                      @php
+                          // For Q1-Q3, if data for the current quarter and the next quarter exist, we show a checkmark.
+                          // For Q4, we just show a neutral info indicator if data exists.
+                          $nextQuarter = ($index < count($quarters) - 1) ? $quarters[$index + 1] : null;
+                          $kpiCurrent = Auth::user()->company->kpis()->where('year', $currentYear)->where('quarter', $quarter)->first();
+                          $kpiNext = $nextQuarter
+                              ? Auth::user()->company->kpis()->where('year', $currentYear)->where('quarter', $nextQuarter)->first()
+                              : null;
+                          if($nextQuarter) {
+                              $emoji = ($kpiCurrent && $kpiNext) ? '✅' : '❌';
+                          } else {
+                              $emoji = ($kpiCurrent) ? 'ℹ️' : '❌';
+                          }
+                      @endphp
+                      <button @click="tab = '{{ $quarter }}'"
+                              :class="tab === '{{ $quarter }}' ? 'border-b-4 border-blue-500 text-blue-500' : 'text-gray-500'"
+                              class="py-2 px-4 focus:outline-none flex items-center">
+                          {{ $quarter }} <span class="ml-1 text-xl">{{ $emoji }}</span>
+                      </button>
+                  @endforeach
               </div>
-  
+
               <!-- Tab Content -->
               <div class="mt-6">
-                  <!-- Q1 Tab with Multiple Charts -->
-                  <div x-show="tab === 'q1'" x-cloak>
-                      <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                          <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Bericht Q1</h3>
-                          <p class="text-gray-700 dark:text-gray-300 mb-6">
-                              Hier finden Sie den Bericht für das erste Quartal, inklusive KPIs und Analysen.
-                          </p>
-                          <!-- Chart Grid -->
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              <!-- Umsatz Chart -->
-                              <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow">
-                                  <h4 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">Umsatz</h4>
-                                  <canvas id="chartUmsatz" height="150"></canvas>
+                  @foreach($quarters as $index => $quarter)
+                      @php
+                          $nextQuarter = ($index < count($quarters) - 1) ? $quarters[$index + 1] : null;
+                          $kpiCurrent = Auth::user()->company->kpis()->where('year', $currentYear)->where('quarter', $quarter)->first();
+                          $kpiNext = $nextQuarter
+                              ? Auth::user()->company->kpis()->where('year', $currentYear)->where('quarter', $nextQuarter)->first()
+                              : null;
+                      @endphp
+                      <div x-show="tab === '{{ $quarter }}'" x-cloak>
+                          @if($kpiCurrent)
+                              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+                                  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Bericht {{ $quarter }}</h3>
+                                  @if($nextQuarter && $kpiNext)
+                                      <p class="text-gray-700 dark:text-gray-300 mb-6">
+                                          Der {{ $quarter }}-Wert wird mit den Daten von {{ $nextQuarter }} verglichen:
+                                      </p>
+
+                                      @php
+                                          $kpiData = [
+                                              'umsatz'      => 'Umsatz',
+                                              'gewinn'      => 'Gewinn',
+                                              'kunden'      => 'Kunden',
+                                              'auftraege'   => 'Aufträge',
+                                              'angestellte' => 'Angestellte'
+                                          ];
+                                      @endphp
+
+                                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                                          @foreach($kpiData as $key => $label)
+                                              @php
+                                                  $valueCurrent = $kpiCurrent->$key ?? 0;
+                                                  $valueNext = $kpiNext->$key ?? 0;
+                                                  $change = $valueNext - $valueCurrent;
+                                                  if($valueCurrent > 0) {
+                                                      $percentage = ($change / $valueCurrent) * 100;
+                                                      $percentageText = number_format($percentage, 2) . '%';
+                                                  } else {
+                                                      // If the current value is zero and the next value > 0, label as "neu"
+                                                      $percentageText = ($valueNext > 0) ? 'Neu' : '0%';
+                                                      $percentage = 0;
+                                                  }
+                                                  $barColor = ($change >= 0) ? 'bg-green-600' : 'bg-red-600';
+                                                  $barWidth = ($valueCurrent > 0) ? min(abs($percentage), 100) : 100;
+                                              @endphp
+
+                                              <div class="bg-white dark:bg-gray-700 shadow-md rounded-lg p-4">
+                                                  <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ $label }}</h4>
+                                                  @if($valueCurrent == 0 && $valueNext > 0)
+                                                      <p class="mt-2 text-gray-700 dark:text-gray-300">
+                                                          {{ $label }} wurde neu erfasst und beträgt
+                                                          <span class="font-bold">
+                                                              @if(in_array($key, ['umsatz','gewinn']))
+                                                                  €{{ number_format($valueNext, 2, ',', '.') }}
+                                                              @else
+                                                                  {{ $valueNext }}
+                                                              @endif
+                                                          </span>.
+                                                      </p>
+                                                  @else
+                                                      <p class="mt-2 text-gray-700 dark:text-gray-300">
+                                                          Der {{ $label }} hat sich von
+                                                          <span class="font-bold">
+                                                              @if(in_array($key, ['umsatz','gewinn']))
+                                                                  €{{ number_format($valueCurrent, 2, ',', '.') }}
+                                                              @else
+                                                                  {{ $valueCurrent }}
+                                                              @endif
+                                                          </span>
+                                                          auf
+                                                          <span class="font-bold">
+                                                              @if(in_array($key, ['umsatz','gewinn']))
+                                                                  €{{ number_format($valueNext, 2, ',', '.') }}
+                                                              @else
+                                                                  {{ $valueNext }}
+                                                              @endif
+                                                          </span> verändert.
+                                                      </p>
+                                                      <p class="mt-1 text-gray-700 dark:text-gray-300">
+                                                          Das entspricht einer Veränderung von <span class="font-bold">{{ $percentageText }}</span>.
+                                                      </p>
+                                                  @endif
+
+                                                  <!-- Visualization: Progress Bar -->
+                                                  <div class="mt-4">
+                                                      <div class="w-full bg-gray-200 rounded-full dark:bg-gray-600">
+                                                          <div class="{{ $barColor }} text-xs font-medium text-white text-center p-0.5 leading-none rounded-full" style="width: {{ $barWidth }}%">
+                                                              @if($valueCurrent > 0)
+                                                                  {{ number_format($percentage, 2) }}%
+                                                              @else
+                                                                  {{ $percentageText }}
+                                                              @endif
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          @endforeach
+                                      </div>
+                                  @else
+                                      <div class="mt-8 text-center">
+                                          <p class="text-gray-700 dark:text-gray-300">
+                                              Für {{ $quarter }} sind noch keine Vergleichsdaten verfügbar.
+                                          </p>
+                                      </div>
+                                  @endif
                               </div>
-                              <!-- Gewinn Chart -->
-                              <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow">
-                                  <h4 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">Gewinn</h4>
-                                  <canvas id="chartGewinn" height="150"></canvas>
+                          @else
+                              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+                                  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Bericht {{ $quarter }}</h3>
+                                  <p class="mt-2 text-gray-700 dark:text-gray-300">
+                                      Der Bericht für {{ $quarter }} ist noch in Bearbeitung.
+                                  </p>
                               </div>
-                              <!-- Aufträge Chart -->
-                              <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow">
-                                  <h4 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">Aufträge</h4>
-                                  <canvas id="chartAuftraege" height="150"></canvas>
-                              </div>
-                              <!-- Kunden Chart -->
-                              <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow">
-                                  <h4 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">Kunden</h4>
-                                  <canvas id="chartKunden" height="150"></canvas>
-                              </div>
-                              <!-- Mitarbeiter Chart -->
-                              <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow md:col-span-2">
-                                  <h4 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">Mitarbeiter</h4>
-                                  <canvas id="chartMitarbeiter" height="150"></canvas>
-                              </div>
-                          </div>
+                          @endif
                       </div>
-                  </div>
-  
-                  <!-- Q2, Q3, Q4 Tabs (Placeholder content) -->
-                  <div x-show="tab === 'q2'" x-cloak>
-                      <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                          <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Bericht Q2</h3>
-                          <p class="mt-2 text-gray-700 dark:text-gray-300">Der Bericht für Q2 ist noch in Bearbeitung.</p>
-                      </div>
-                  </div>
-                  <div x-show="tab === 'q3'" x-cloak>
-                      <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                          <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Bericht Q3</h3>
-                          <p class="mt-2 text-gray-700 dark:text-gray-300">Der Bericht für Q3 ist noch in Bearbeitung.</p>
-                      </div>
-                  </div>
-                  <div x-show="tab === 'q4'" x-cloak>
-                      <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                          <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Bericht Q4</h3>
-                          <p class="mt-2 text-gray-700 dark:text-gray-300">Der Bericht für Q4 ist noch in Bearbeitung.</p>
-                      </div>
-                  </div>
+                  @endforeach
               </div>
           </div>
       </div>
   </div>
-  
-  <!-- Chart.js Library from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-      window.addEventListener('load', function() {
-          // Umsatz Chart (Bar Chart)
-          var ctxUmsatz = document.getElementById('chartUmsatz').getContext('2d');
-          new Chart(ctxUmsatz, {
-              type: 'bar',
-              data: {
-                  labels: ['Januar', 'Februar', 'März'],
-                  datasets: [{
-                      label: 'Umsatz in €',
-                      data: [120000, 150000, 100000],
-                      backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                      borderColor: 'rgba(54, 162, 235, 1)',
-                      borderWidth: 1
-                  }]
-              },
-              options: {
-                  responsive: true,
-                  scales: {
-                      y: {
-                          beginAtZero: true,
-                          ticks: {
-                              callback: function(value) {
-                                  return '€' + value;
-                              }
-                          }
-                      }
-                  }
-              }
-          });
-  
-          // Gewinn Chart (Line Chart)
-          var ctxGewinn = document.getElementById('chartGewinn').getContext('2d');
-          new Chart(ctxGewinn, {
-              type: 'line',
-              data: {
-                  labels: ['Januar', 'Februar', 'März'],
-                  datasets: [{
-                      label: 'Gewinn in €',
-                      data: [30000, 40000, 25000],
-                      backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                      borderColor: 'rgba(75, 192, 192, 1)',
-                      borderWidth: 2,
-                      fill: true
-                  }]
-              },
-              options: {
-                  responsive: true,
-                  scales: {
-                      y: {
-                          beginAtZero: true,
-                          ticks: {
-                              callback: function(value) {
-                                  return '€' + value;
-                              }
-                          }
-                      }
-                  }
-              }
-          });
-  
-          // Aufträge Chart (Doughnut Chart)
-          var ctxAuftraege = document.getElementById('chartAuftraege').getContext('2d');
-          new Chart(ctxAuftraege, {
-              type: 'doughnut',
-              data: {
-                  labels: ['Abgeschlossen', 'In Bearbeitung', 'Neu'],
-                  datasets: [{
-                      label: 'Aufträge',
-                      data: [80, 30, 10],
-                      backgroundColor: [
-                          'rgba(255, 99, 132, 0.6)',
-                          'rgba(255, 205, 86, 0.6)',
-                          'rgba(54, 162, 235, 0.6)'
-                      ],
-                      hoverOffset: 4
-                  }]
-              },
-              options: {
-                  responsive: true
-              }
-          });
-  
-          // Kunden Chart (Pie Chart)
-          var ctxKunden = document.getElementById('chartKunden').getContext('2d');
-          new Chart(ctxKunden, {
-              type: 'pie',
-              data: {
-                  labels: ['Neu', 'Bestandskunden'],
-                  datasets: [{
-                      label: 'Kunden',
-                      data: [150, 850],
-                      backgroundColor: [
-                          'rgba(153, 102, 255, 0.6)',
-                          'rgba(201, 203, 207, 0.6)'
-                      ]
-                  }]
-              },
-              options: {
-                  responsive: true
-              }
-          });
-  
-          // Mitarbeiter Chart (Radar Chart)
-          var ctxMitarbeiter = document.getElementById('chartMitarbeiter').getContext('2d');
-          new Chart(ctxMitarbeiter, {
-              type: 'radar',
-              data: {
-                  labels: ['IT', 'Support', 'Vertrieb', 'Marketing', 'HR'],
-                  datasets: [{
-                      label: 'Mitarbeiterzahl',
-                      data: [20, 15, 10, 8, 5],
-                      backgroundColor: 'rgba(255, 159, 64, 0.5)',
-                      borderColor: 'rgba(255, 159, 64, 1)',
-                      pointBackgroundColor: 'rgba(255, 159, 64, 1)'
-                  }]
-              },
-              options: {
-                  responsive: true,
-                  scales: {
-                      r: {
-                          beginAtZero: true
-                      }
-                  }
-              }
-          });
-      });
-  </script>
 </x-app-layout>
