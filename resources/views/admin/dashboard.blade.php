@@ -24,27 +24,27 @@
                     <!-- Unternehmen Button -->
                     <a href="{{ route('admin.companies') }}" class="flex flex-col items-center justify-center p-8 bg-gradient-to-r from-blue-400 to-green-400 hover:from-blue-500 hover:to-green-500 rounded-xl shadow-md transition transform hover:scale-105">
                         <!-- Sample Building Icon SVG -->
-                        <svg class="w-16 h-16 text-white mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M9 3v18m6-18v18" />
-                        </svg>
+                        <div class="text-4xl mb-4 text-white">
+                            <i class="fas fa-rocket"></i>
+                        </div>
                         <span class="text-xl font-bold text-white">Unternehmen</span>
                     </a>
 
                     <!-- Entscheidungen Button -->
                     <a href="#" class="flex flex-col items-center justify-center p-8 bg-gradient-to-r from-red-400 to-yellow-400 hover:from-red-500 hover:to-yellow-500 rounded-xl shadow-md transition transform hover:scale-105">
                         <!-- Sample Decision Icon SVG -->
-                        <svg class="w-16 h-16 text-white mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4" />
-                        </svg>
+                        <div class="text-4xl mb-4 text-white">
+                            <i class="fas fa-thumbs-up"></i>
+                        </div>
                         <span class="text-xl font-bold text-white">Entscheidungen</span>
                     </a>
 
                     <!-- Benutzerkonten Button -->
                     <a href="#" class="flex flex-col items-center justify-center p-8 bg-gradient-to-r from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500 rounded-xl shadow-md transition transform hover:scale-105">
                         <!-- Sample User Icon SVG -->
-                        <svg class="w-16 h-16 text-white mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87m3-12a4 4 0 110 8 4 4 0 010-8zm8 4a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
+                        <div class="text-4xl mb-4 text-white">
+                            <i class="fas fa-users"></i>
+                        </div>
                         <span class="text-xl font-bold text-white">Benutzerkonten</span>
                     </a>
                 </div>
