@@ -6,6 +6,8 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\Admin\AdminCompanyController;
 use App\Models\Company;
+use App\Http\Controllers\Admin\UserController;
+
 
 
 
@@ -53,6 +55,9 @@ Route::middleware(['auth'])->group(function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
+    Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
+
+
     Route::get('/admin/companies', function () {
         // Inline check for admin privileges
         if (Auth::user()->role !== 'admin') {
@@ -62,6 +67,9 @@ Route::middleware(['auth'])->group(function () {
         $companies = Company::all();
         return view('admin.companies', compact('companies'));
     })->name('admin.companies');
+
+    Route::post('/admin/users/promote/{id}', [UserController::class, 'promote'])->name('admin.users.promote');
+
 });
 
 

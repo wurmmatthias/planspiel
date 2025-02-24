@@ -40,7 +40,7 @@
                     </a>
 
                     <!-- Benutzerkonten Button -->
-                    <a href="#" class="flex flex-col items-center justify-center p-8 bg-gradient-to-r from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500 rounded-xl shadow-md transition transform hover:scale-105">
+                    <a href="{{ route('admin.users') }}" class="flex flex-col items-center justify-center p-8 bg-gradient-to-r from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500 rounded-xl shadow-md transition transform hover:scale-105">
                         <!-- Sample User Icon SVG -->
                         <svg class="w-16 h-16 text-white mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87m3-12a4 4 0 110 8 4 4 0 010-8zm8 4a4 4 0 11-8 0 4 4 0 018 0z" />
