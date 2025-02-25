@@ -138,7 +138,7 @@
                     </div>
                 </div>
 
-                <div class="bg-gradient-to-r from-red-400 to-yellow-400 text-white p-6 rounded-lg shadow-lg text-center">
+                <div class="bg-gradient-to-r from-red-400 to-yellow-400 text-white p-6 rounded-lg shadow-lg text-center" hidden>
                     <!-- Fire Emoji -->
                     <div class="text-5xl mb-2">🔥</div>
                     <!-- Main Text -->
@@ -198,170 +198,138 @@
                   </div>
                 @endif
 
-<!-- Core Decisions Section -->
 <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8 mt-8">
-    <h3 class="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">Kernentscheidungen für das nächste Quartal</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Decision 1: Marketing-Investition -->
-        <div class="relative bg-gray-100 dark:bg-gray-700 p-6 rounded-lg shadow-md" x-data="{ selected: false }">
-            <!-- Checkmark Indicator -->
-            <div x-show="selected" class="absolute top-2 right-2">
-                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-            </div>
-            <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Marketing-Investition</h4>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">Wie viel Budget möchten Sie in Marketing investieren?</p>
-            <div class="mt-4">
-                <select @change="selected = true" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-200">
+    <div class="max-w-7xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-8 text-center">
+        Triff deine Entscheidungen
+      </h3>
+
+      <!-- Accordion Container -->
+      <div x-data="{ openIndex: null }" class="space-y-4">
+        @php
+          $decisions = [
+            (object)[
+              'title' => 'Marketing-Investition',
+              'question' => 'Wie viel Budget möchten Sie in Marketing investieren?',
+              'inputType' => 'select',
+              'options' => ['Niedrig', 'Mittel', 'Hoch'],
+              'icon' => 'fa-solid fa-bullhorn'
+            ],
+            (object)[
+              'title' => 'Produktionskapazität',
+              'question' => 'Möchten Sie Ihre Produktionskapazität erweitern?',
+              'inputType' => 'radio',
+              'options' => ['Erweitern', 'Beibehalten'],
+              'icon' => 'fa-solid fa-industry'
+            ],
+            (object)[
+              'title' => 'Personalentscheidungen',
+              'question' => 'Planen Sie neue Mitarbeiter einzustellen?',
+              'inputType' => 'checkbox',
+              'options' => [],
+              'icon' => 'fa-solid fa-users'
+            ],
+            (object)[
+              'title' => 'F&E-Investition',
+              'question' => 'Wie viel in Forschung &amp; Entwicklung investieren?',
+              'inputType' => 'select',
+              'options' => ['Niedrig', 'Mittel', 'Hoch'],
+              'icon' => 'fa-solid fa-flask'
+            ],
+            (object)[
+              'title' => 'Preisstrategie',
+              'question' => 'Wie sollen Ihre Preise gestaltet werden?',
+              'inputType' => 'select',
+              'options' => ['Wettbewerbsfähig', 'Premium', 'Rabatt'],
+              'icon' => 'fa-solid fa-tag'
+            ],
+            (object)[
+              'title' => 'Kundenservice',
+              'question' => 'Möchten Sie in verbesserten Kundenservice investieren?',
+              'inputType' => 'radio',
+              'options' => ['Verbessern', 'Beibehalten'],
+              'icon' => 'fa-solid fa-headset'
+            ],
+            (object)[
+              'title' => 'Lieferantenverhandlung',
+              'question' => 'Sollen Sie bessere Konditionen aushandeln?',
+              'inputType' => 'select',
+              'options' => ['Verhandeln', 'Akzeptieren'],
+              'icon' => 'fa-solid fa-handshake'
+            ],
+            (object)[
+              'title' => 'Finanzielle Restrukturierung',
+              'question' => 'Möchten Sie Ihre Finanzstruktur anpassen?',
+              'inputType' => 'select',
+              'options' => ['Optimieren', 'Restrukturieren', 'Beibehalten'],
+              'icon' => 'fa-solid fa-chart-line'
+            ]
+          ];
+        @endphp
+
+        @foreach($decisions as $index => $decision)
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+            <!-- Accordion Header with Gradient and Icon -->
+            <button @click="openIndex = openIndex === {{ $index }} ? null : {{ $index }}"
+                    class="w-full focus:outline-none">
+              <div class="flex justify-between items-center px-6 py-4 bg-gradient-to-r from-green-500 to-green-700">
+                <div class="flex items-center space-x-3">
+                  <i class="{{ $decision->icon }} text-white text-xl"></i>
+                  <span class="text-xl font-bold text-white">{{ $decision->title }}</span>
+                </div>
+                <div>
+                  <svg x-show="openIndex !== {{ $index }}" class="w-6 h-6 text-white transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  <svg x-show="openIndex === {{ $index }}" class="w-6 h-6 text-white transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+                  </svg>
+                </div>
+              </div>
+            </button>
+
+            <!-- Accordion Content -->
+            <div x-show="openIndex === {{ $index }}" x-collapse class="px-6 pb-6 bg-white dark:bg-gray-800 pt-6">
+              <p class="text-gray-700 dark:text-gray-300 mb-4">{{ $decision->question }}</p>
+              <div>
+                @if($decision->inputType === 'select')
+                  <select class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200">
                     <option value="">Bitte wählen</option>
-                    <option value="low">Niedrig</option>
-                    <option value="medium">Mittel</option>
-                    <option value="high">Hoch</option>
-                </select>
+                    @foreach($decision->options as $option)
+                      <option value="{{ $option }}">{{ $option }}</option>
+                    @endforeach
+                  </select>
+                @elseif($decision->inputType === 'radio')
+                  <div class="space-y-2">
+                    @foreach($decision->options as $option)
+                      <label class="inline-flex items-center">
+                        <input type="radio" name="decision_{{ $index }}" value="{{ $option }}" class="form-radio text-blue-600">
+                        <span class="ml-2">{{ $option }}</span>
+                      </label>
+                    @endforeach
+                  </div>
+                @elseif($decision->inputType === 'checkbox')
+                  <label class="inline-flex items-center">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="ml-2">Ja</span>
+                  </label>
+                @endif
+              </div>
             </div>
-        </div>
+          </div>
+        @endforeach
+      </div>
 
-        <!-- Decision 2: Produktionskapazität -->
-        <div class="relative bg-gray-100 dark:bg-gray-700 p-6 rounded-lg shadow-md" x-data="{ selected: false }">
-            <div x-show="selected" class="absolute top-2 right-2">
-                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-            </div>
-            <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Produktionskapazität</h4>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">Möchten Sie Ihre Produktionskapazität erweitern?</p>
-            <div class="mt-4">
-                <label class="inline-flex items-center">
-                    <input type="radio" class="form-radio text-blue-600" name="production" value="expand" @change="selected = true">
-                    <span class="ml-2">Erweitern</span>
-                </label>
-                <label class="inline-flex items-center ml-6">
-                    <input type="radio" class="form-radio text-blue-600" name="production" value="maintain" checked @change="selected = true">
-                    <span class="ml-2">Beibehalten</span>
-                </label>
-            </div>
-        </div>
-
-        <!-- Decision 3: Personalentscheidungen -->
-        <div class="relative bg-gray-100 dark:bg-gray-700 p-6 rounded-lg shadow-md" x-data="{ selected: false }">
-            <div x-show="selected" class="absolute top-2 right-2">
-                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-            </div>
-            <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Personalentscheidungen</h4>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">Planen Sie neue Mitarbeiter einzustellen?</p>
-            <div class="mt-4">
-                <label class="inline-flex items-center">
-                    <input type="checkbox" class="form-checkbox text-blue-600" name="hire" value="yes" @change="selected = $event.target.checked">
-                    <span class="ml-2">Ja, einstellen</span>
-                </label>
-            </div>
-        </div>
-
-        <!-- Decision 4: F&E-Investition -->
-        <div class="relative bg-gray-100 dark:bg-gray-700 p-6 rounded-lg shadow-md" x-data="{ selected: false }">
-            <div x-show="selected" class="absolute top-2 right-2">
-                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-            </div>
-            <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">F&E-Investition</h4>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">Wie viel in Forschung &amp; Entwicklung investieren?</p>
-            <div class="mt-4">
-                <select @change="selected = true" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-200">
-                    <option value="">Bitte wählen</option>
-                    <option value="low">Niedrig</option>
-                    <option value="medium">Mittel</option>
-                    <option value="high">Hoch</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Decision 5: Preisstrategie -->
-        <div class="relative bg-gray-100 dark:bg-gray-700 p-6 rounded-lg shadow-md" x-data="{ selected: false }">
-            <div x-show="selected" class="absolute top-2 right-2">
-                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-            </div>
-            <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Preisstrategie</h4>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">Wie sollen Ihre Preise gestaltet werden?</p>
-            <div class="mt-4">
-                <select @change="selected = true" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-200">
-                    <option value="">Bitte wählen</option>
-                    <option value="competitive">Wettbewerbsfähig</option>
-                    <option value="premium">Premium</option>
-                    <option value="discount">Rabatt</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Decision 6: Kundenservice -->
-        <div class="relative bg-gray-100 dark:bg-gray-700 p-6 rounded-lg shadow-md" x-data="{ selected: false }">
-            <div x-show="selected" class="absolute top-2 right-2">
-                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-            </div>
-            <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Kundenservice</h4>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">Möchten Sie in verbesserten Kundenservice investieren?</p>
-            <div class="mt-4">
-                <label class="inline-flex items-center">
-                    <input type="radio" class="form-radio text-blue-600" name="customer_service" value="improve" @change="selected = true">
-                    <span class="ml-2">Verbessern</span>
-                </label>
-                <label class="inline-flex items-center ml-6">
-                    <input type="radio" class="form-radio text-blue-600" name="customer_service" value="maintain" checked @change="selected = true">
-                    <span class="ml-2">Beibehalten</span>
-                </label>
-            </div>
-        </div>
-
-        <!-- Decision 7: Lieferantenverhandlung -->
-        <div class="relative bg-gray-100 dark:bg-gray-700 p-6 rounded-lg shadow-md" x-data="{ selected: false }">
-            <div x-show="selected" class="absolute top-2 right-2">
-                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-            </div>
-            <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Lieferantenverhandlung</h4>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">Sollen Sie bessere Konditionen aushandeln?</p>
-            <div class="mt-4">
-                <select @change="selected = true" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-200">
-                    <option value="">Bitte wählen</option>
-                    <option value="negotiate">Verhandeln</option>
-                    <option value="accept">Akzeptieren</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Decision 8: Finanzielle Restrukturierung -->
-        <div class="relative bg-gray-100 dark:bg-gray-700 p-6 rounded-lg shadow-md" x-data="{ selected: false }">
-            <div x-show="selected" class="absolute top-2 right-2">
-                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-            </div>
-            <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Finanzielle Restrukturierung</h4>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">Möchten Sie Ihre Finanzstruktur anpassen?</p>
-            <div class="mt-4">
-                <select @change="selected = true" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-200">
-                    <option value="">Bitte wählen</option>
-                    <option value="optimize">Optimieren</option>
-                    <option value="restructure">Restrukturieren</option>
-                    <option value="maintain">Beibehalten</option>
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="mt-6 text-center">
-        <button type="button" class="px-8 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition duration-300">
-            Entscheidungen speichern
+      <!-- Save Button -->
+      <div class="mt-8 text-center">
+        <button class="w-full px-8 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition duration-300">
+          Entscheidungen speichern
         </button>
+      </div>
     </div>
-</div>
+  </div>
+
+
 @endif
 
         </div>

@@ -12,9 +12,9 @@ class CompanyController extends Controller
     public function create()
     {
         // Prevent admins from creating a company
-        if (Auth::user()->isAdmin()) {
-            abort(403, 'Admins cannot create a company.');
-        }
+        //if (Auth::user()->isAdmin()) {
+        //    abort(403, 'Admins cannot create a company.');
+        //}
 
         return view('companies.create');
     }
@@ -23,37 +23,37 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         // Prevent admins from creating a company if needed
-        if (Auth::user()->isAdmin()) {
-            abort(403, 'Admins cannot create a company.');
-        }
-    
+        //if (Auth::user()->isAdmin()) {
+        //    abort(403, 'Admins cannot create a company.');
+        //}
+
         $data = $request->validate([
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
             'logo'        => 'required|string', // This will store the selected icon identifier
         ]);
-    
+
         $company = Company::create([
             'name'        => $data['name'],
             'owner_id'    => Auth::id(),
             'description' => $data['description'] ?? null,
             'logo'        => $data['logo'],
         ]);
-    
+
         // Assign the newly created company to the user
         $user = Auth::user();
         $user->company()->associate($company);
         $user->save();
-    
+
         return redirect()->route('dashboard')->with('success', 'Company created successfully!');
     }
-    
+
     // Show form to join an existing company
     public function joinForm()
     {
-        if (Auth::user()->isAdmin()) {
-            abort(403, 'Admins cannot join a company.');
-        }
+        //if (Auth::user()->isAdmin()) {
+        //    abort(403, 'Admins cannot join a company.');
+        //}
 
         // For example, list available companies or show a join code form.
         $companies = Company::all();
@@ -63,9 +63,9 @@ class CompanyController extends Controller
     // Handle joining a company (could be via join code or selection)
     public function join(Request $request)
     {
-        if (Auth::user()->isAdmin()) {
-            abort(403, 'Admins cannot join a company.');
-        }
+        //if (Auth::user()->isAdmin()) {
+        //    abort(403, 'Admins cannot join a company.');
+        //}
 
         $data = $request->validate([
             'company_id' => 'required|exists:companies,id',
