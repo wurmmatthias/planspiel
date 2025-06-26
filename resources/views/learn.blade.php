@@ -1,3 +1,5 @@
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -99,6 +101,85 @@
                 </a>
                 <!-- Additional cards can be added here -->
             </div>
+
+            <br>
+            <br>
+
+<!-- Floating Chatbot Button + Panel -->
+<div x-data="{ open: false }" class="fixed bottom-6 right-6 z-50">
+    <!-- Toggle Button -->
+    <button @click="open = !open"
+        class="bg-gradient-to-r from-blue-400 to-green-400 rounded-lg p-6 shadow-lg transform hover:scale-105 transition duration-300">
+        <i class="fas fa-robot text-xl"></i>
+    </button>
+
+    <!-- Chat Panel -->
+    <div x-show="open" @click.away="open = false" x-transition
+        class="mt-4 w-80 bg-white dark:bg-gray-800 text-gray-800 dark:text-white rounded-lg shadow-2xl overflow-hidden flex flex-col h-[500px]">
+        <div class="bg-gradient-to-r from-blue-400 to-green-400 text-white px-4 py-3 font-bold">
+            Lern-Chatbot
+        </div>
+
+        <div id="chatlog"
+            class="flex-1 overflow-y-auto p-4 space-y-2 text-sm bg-gray-50 dark:bg-gray-900">
+            <p class="text-gray-400 text-sm italic">Frag mich etwas zu IT, Management, KPIs usw.</p>
+        </div>
+
+        <div class="flex border-t border-gray-200 dark:border-gray-700">
+            <input type="text" id="chatInput" placeholder="Deine Frage..."
+                class="flex-grow p-2 text-sm border-none focus:outline-none dark:bg-gray-800 dark:text-white" />
+            <button onclick="sendChat()"
+                class="bg-gradient-to-r from-blue-400 to-green-400 text-white px-4 hover:bg-blue-700 transition">Senden</button>
         </div>
     </div>
+</div>
+
+
+
+        </div>
+    </div>
+
+<script>
+    async function sendChat() {
+        const input = document.getElementById('chatInput');
+        const log = document.getElementById('chatlog');
+        const question = input.value.trim();
+        if (!question) return;
+
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        // Nutzerfrage anzeigen
+        log.innerHTML += `<div><strong>Du:</strong> ${question}</div>`;
+        input.value = "";
+
+        try {
+            const res = await fetch("/lernchatbot", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": token
+                },
+                body: JSON.stringify({ question })
+            });
+
+            const data = await res.json();
+            log.innerHTML += `<div><strong>Bot:</strong> ${data.answer}</div>`;
+            log.scrollTop = log.scrollHeight;
+
+        } catch (error) {
+            log.innerHTML += `<div class="text-red-600"><strong>Fehler:</strong> ${error.message}</div>`;
+        }
+    }
+
+        // ENTER-Taste abfangen
+    document.getElementById("chatInput").addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault(); // verhindert Zeilenumbruch
+            sendChat();
+        }
+    });
+</script>
+
+
+
 </x-app-layout>

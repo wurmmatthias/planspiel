@@ -5,6 +5,34 @@
         </h2>
     </x-slot>
 
+      <!-- Tutorial Modal (Show this modal on company creation/join) -->
+      <div x-data="tutorialModal({ show: {{ session('show_tutorial') ? 'true' : 'false' }} })" x-show="showTutorial" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-2xl w-full mx-4">
+      <!-- Modal Header with Gradient -->
+      <div class="px-6 py-4 bg-gradient-to-r from-green-500 to-green-700 rounded-t-lg">
+        <h3 class="text-2xl font-bold text-white" x-text="pages[currentPage].title"></h3>
+      </div>
+      <!-- Modal Content -->
+      <div class="px-6 py-8">
+        <p class="text-gray-800 dark:text-gray-200 text-lg" x-text="pages[currentPage].content"></p>
+      </div>
+      <!-- Navigation Buttons -->
+      <div class="px-6 py-4 bg-gray-100 dark:bg-gray-700 rounded-b-lg flex items-center justify-between">
+        <button x-show="currentPage > 0" @click="prevPage()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg">
+          Zurück
+        </button>
+        <div class="flex-1 text-center">
+          <template x-for="(page, index) in pages" :key="index">
+            <span class="inline-block w-3 h-3 mx-1 rounded-full" :class="{'bg-green-500': index === currentPage, 'bg-gray-300': index !== currentPage}"></span>
+          </template>
+        </div>
+        <button @click="nextPage()" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg">
+          <span x-text="currentPage < pages.length - 1 ? 'Weiter' : 'Fertig'"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(Auth::user()->company)
@@ -138,7 +166,7 @@
                     </div>
                 </div>
 
-                <div class="bg-gradient-to-r from-red-400 to-yellow-400 text-white p-6 rounded-lg shadow-lg text-center" hidden>
+                <div class="bg-gradient-to-r from-red-400 to-yellow-400 text-white p-6 rounded-lg shadow-lg text-center">
                     <!-- Fire Emoji -->
                     <div class="text-5xl mb-2">🔥</div>
                     <!-- Main Text -->
@@ -231,7 +259,7 @@
             ],
             (object)[
               'title' => 'F&E-Investition',
-              'question' => 'Wie viel in Forschung &amp; Entwicklung investieren?',
+              'question' => 'Wie viel in Forschung & Entwicklung investieren?',
               'inputType' => 'select',
               'options' => ['Niedrig', 'Mittel', 'Hoch'],
               'icon' => 'fa-solid fa-flask'
@@ -334,4 +362,44 @@
 
         </div>
     </div>
+
+    <script>
+    function tutorialModal() {
+      return {
+        showTutorial: true,
+        currentPage: 0,
+        pages: [
+          {
+            title: 'Tutorial',
+            content: 'Herzlich willkommen im SIT Strategy Lab. Hier lernst du, wie du dein Unternehmen erfolgreich führst.'
+          },
+          {
+            title: 'Tutorial - Unternehmen gründen',
+            content: 'In diesem Schritt erfährst du, wie du dein Unternehmen gründest und welche Schritte dazu nötig sind.'
+          },
+          {
+            title: 'Tutorial - Entscheidungen treffen',
+            content: 'Lerne, wie du strategische Entscheidungen triffst, um dein Unternehmen voranzubringen.'
+          },
+          {
+            title: 'Tutorial - KPIs verstehen',
+            content: 'Verfolge die wichtigsten Kennzahlen deines Unternehmens und optimiere deine Strategie kontinuierlich.'
+          }
+        ],
+        nextPage() {
+          if (this.currentPage < this.pages.length - 1) {
+            this.currentPage++;
+          } else {
+            // When finished, hide the modal.
+            this.showTutorial = false;
+          }
+        },
+        prevPage() {
+          if (this.currentPage > 0) {
+            this.currentPage--;
+          }
+        }
+      }
+    }
+  </script>
 </x-app-layout>

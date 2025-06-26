@@ -7,6 +7,8 @@ use App\Http\Controllers\LearningController;
 use App\Http\Controllers\Admin\AdminCompanyController;
 use App\Models\Company;
 use App\Http\Controllers\Admin\UserController;
+use Illuminate\Http\Request;
+use OpenAI\Laravel\Facades\OpenAI;
 
 
 
@@ -71,6 +73,66 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/users/promote/{id}', [UserController::class, 'promote'])->name('admin.users.promote');
 
 });
+
+// Test Chatbot Implementation
+/*
+Route::post('/lernchatbot', function (Request $request) {
+    $question = $request->input('question');
+
+    if (!$question) {
+        return response()->json(['answer' => 'Bitte gib eine Frage ein.'], 400);
+    }
+
+    $response = OpenAI::chat()->create([
+        'model' => 'gpt-3.5-turbo',
+        'messages' => [
+            [
+                'role' => 'system',
+                'content' => 'Du bist ein Lern-Chatbot für ein IT-Unternehmensplanspiel. Antworte kurz und verständlich auf Fragen zu Themen wie IT-Management, KPIs, Finanzierung, Marketing etc.'
+            ],
+            [
+                'role' => 'user',
+                'content' => $question
+            ],
+        ],
+    ]);
+
+    return response()->json([
+        'answer' => $response->choices[0]->message->content,
+    ]);
+})->name('lernchatbot');
+*/
+
+// Test Chatbot Implementation
+Route::post('/lernchatbot', function (Request $request) {
+    $question = $request->input('question');
+
+    if (!$question) {
+        return response()->json(['answer' => 'Bitte gib eine Frage ein.'], 400);
+    }
+
+    // Dummy-Logik: Gib bei bestimmten Schlüsselwörtern einfache Antworten zurück
+    $faq = [
+        'kpi' => 'Ein KPI ist eine Leistungskennzahl, z. B. Umsatz oder Kundenzufriedenheit.',
+        'it management' => 'IT-Management befasst sich mit der Planung und Steuerung von IT-Systemen.',
+        'marketing' => 'Marketing ist die gezielte Vermarktung von Produkten oder Dienstleistungen.',
+    ];
+
+    $answer = 'Dies ist eine Testantwort vom lokalen Dummy-Chatbot!';
+
+    foreach ($faq as $keyword => $response) {
+        if (stripos($question, $keyword) !== false) {
+            $answer = $response;
+            break;
+        }
+    }
+
+    return response()->json([
+        'answer' => $answer,
+    ]);
+})->name('lernchatbot');
+
+
 
 
 require __DIR__.'/auth.php';
